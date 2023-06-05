@@ -1,0 +1,117 @@
+import Icon from "deco-sites/fashion/components/ui/Icon.tsx";
+import Button from "deco-sites/fashion/components/ui/Button.tsx";
+import { useUI } from "deco-sites/fashion/sdk/useUI.ts";
+import { useCart } from "deco-sites/std/commerce/vtex/hooks/useCart.ts";
+import { AnalyticsEvent } from "deco-sites/std/commerce/types.ts";
+import Image from "deco-sites/std/components/Image.tsx";
+
+declare global {
+  interface Window {
+    DECO_SITES_STD: {
+      sendAnalyticsEvent: (args: AnalyticsEvent) => void;
+    };
+  }
+}
+
+function SearchButton() {
+  const { displaySearchbar } = useUI();
+
+  return (
+    <Button
+      variant="icon"
+      aria-label="search icon button"
+      onClick={() => {
+        displaySearchbar.value = !displaySearchbar.peek();
+      }}
+    >
+      <Icon id="MagnifyingGlass" width={20} height={20} strokeWidth={0.1} />
+    </Button>
+  );
+}
+
+function MenuButton() {
+  const { displayMenu } = useUI();
+
+  return (
+    <Button
+      variant="icon"
+      aria-label="open menu"
+      onClick={() => {
+        displayMenu.value = true;
+      }}
+    >
+      <Icon
+        id="Bars4"
+        class="text-black lg:max-w-[20px]"
+        width={28}
+        height={20}
+        strokeWidth={0.01}
+      />
+    </Button>
+  );
+}
+
+function CartButton() {
+  const { displayCart } = useUI();
+  const { loading, cart, mapItemsToAnalyticsItems } = useCart();
+  const totalItems = cart.value?.items.length || null;
+  const dataDeco = displayCart.value ? {} : { "data-deco": "open-cart" };
+  const currencyCode = cart.value?.storePreferencesData.currencyCode;
+  const total = cart.value?.totalizers.find((item) => item.id === "Items");
+  const discounts = cart.value?.totalizers.find((item) =>
+    item.id === "Discounts"
+  );
+
+  return (
+    <Button
+      {...dataDeco}
+      variant="icon"
+      class="relative"
+      aria-label="open cart"
+      disabled={loading.value}
+      onClick={() => {
+        displayCart.value = true;
+        window.DECO_SITES_STD.sendAnalyticsEvent({
+          name: "view_cart",
+          params: {
+            currency: cart.value ? currencyCode! : "",
+            value: total?.value
+              ? (total?.value - (discounts?.value ?? 0)) / 100
+              : 0,
+
+            items: cart.value ? mapItemsToAnalyticsItems(cart.value) : [],
+          },
+        });
+      }}
+    >
+      <Image
+        src="https://lebiscuit.vtexassets.com/assets/vtex/assets-builder/lebiscuit.le-store/1.2.114/svg/geral/blackfriday/__sacola___45bace8e1e0e1ea2778a5e7600d4cacb.svg"
+        width={24}
+        height={24}
+      />
+      {totalItems && (
+        <span class="absolute text-[9px] right-0 top-0 rounded-full bg-secondary text-secondary-content w-4 h-4 flex items-center justify-center">
+          {totalItems}
+        </span>
+      )}
+    </Button>
+  );
+}
+
+function HeaderButton({ variant }: { variant: "cart" | "search" | "menu" }) {
+  if (variant === "cart") {
+    return <CartButton />;
+  }
+
+  if (variant === "search") {
+    return <SearchButton />;
+  }
+
+  if (variant === "menu") {
+    return <MenuButton />;
+  }
+
+  return null;
+}
+
+export default HeaderButton;

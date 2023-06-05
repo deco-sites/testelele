@@ -8,14 +8,20 @@
     "pre-commit": "check"
   },
   "lint": {
-    "exclude": [
-      "static/"
-    ]
+    "files": {
+      "exclude": [
+        "static/",
+        "README.md"
+      ]
+    }
   },
   "fmt": {
-    "exclude": [
-      "static/"
-    ]
+    "files": {
+      "exclude": [
+        "static/",
+        "README.md"
+      ]
+    }
   },
   "importMap": "./import_map.json",
   "compilerOptions": {

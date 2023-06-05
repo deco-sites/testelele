@@ -69,8 +69,9 @@ yarn-error.log
 dist/
 server/
 
-import_map.local.json
+# Deno.lock
 deno.lock
 
-# db files
-.config.json
+schemas.gen.json
+
+live.gen.ts

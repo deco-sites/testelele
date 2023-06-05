@@ -5,10 +5,8 @@
  * https://github.com/saadeghi/daisyui/blob/37bca23444bc9e4d304362c14b7088f9a08f1c74/src/docs/src/routes/theme-generator.svelte
  */
 import { Color } from "https://deno.land/x/color@v0.3.0/mod.ts";
-import { useId } from "preact/hooks";
 import { Head } from "$fresh/runtime.ts";
-import { theme as defaultTheme } from "../tailwind.config.ts";
-import Icon from "../components/ui/Icon.tsx";
+import { theme } from "deco-sites/fashion/tailwind.config.ts";
 
 export interface Colors {
   /**
@@ -141,88 +139,11 @@ export interface Colors {
   "info-content"?: string;
 }
 
-export interface Miscellaneous {
-  /**
-   * @default 1rem
-   * @title Rounded box
-   * @description border radius rounded-box utility class, used in card and other large boxes
-   */
-  "--rounded-box": string;
-  /**
-   * @default 0.5rem
-   * @title Rounded button
-   * @description border radius rounded-btn utility class, used in buttons and similar element
-   */
-  "--rounded-btn": string;
-  /**
-   * @default 1.9rem
-   * @title Rounded badge
-   * @description border radius rounded-badge utility class, used in badges and similar
-   */
-  "--rounded-badge": string;
-  /**
-   * @default 0.25s
-   * @title Animation button
-   * @description duration of animation when you click on button
-   */
-  "--animation-btn": string;
-  /**
-   * @default 0.2s
-   * @title Animation input
-   * @description duration of animation for inputs like checkbox, toggle, radio, etc
-   */
-  "--animation-input": string;
-  /**
-   * @default uppercase
-   * @title Button text case
-   * @description set default text transform for buttons
-   */
-  "--btn-text-case": string;
-  /**
-   * @default 0.95
-   * @title Button focus scale
-   * @description scale transform of button when you focus on it
-   */
-  "--btn-focus-scale": string;
-  /**
-   * @default 1px
-   * @title Border button
-   * @description border width of buttons
-   */
-  "--border-btn": string;
-  /**
-   * @default 1px
-   * @title Tab border
-   * @description border width of tabs
-   */
-  "--tab-border": string;
-  /**
-   * @default 0.5rem
-   * @title Tab radius
-   * @description border radius of tabs
-   */
-  "--tab-radius": string;
-}
-
-export interface Font {
-  /**
-   * @default 'Albert Sans'
-   */
-  fontFamily: string;
-  /**
-   * @default @import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&display=swap');
-   * \@format css
-   */
-  styleInnerHtml: string;
-}
-
 export interface Props {
   colors?: Colors;
-  miscellaneous?: Miscellaneous;
-  fonts?: Font;
 }
 
-type Theme = Colors & Miscellaneous;
+type Palette = [string, string][];
 
 const darken = (color: string, percentage = 0.2) =>
   Color.string(color).darken(percentage);
@@ -235,13 +156,15 @@ const contrasted = (color: string, percentage = 0.8) => {
     : c.mix(Color.rgb(0, 0, 0), percentage).saturate(.1);
 };
 
-const toVariables = (t: Theme): [string, string][] => {
+export const createPalette = (
+  t: Colors = theme,
+): Palette => {
   const toValue = (color: string | Color) => {
     const hsl = typeof color === "string" ? Color.string(color) : color;
     return `${hsl.hue()} ${hsl.saturation()}% ${hsl.lightness()}%`;
   };
 
-  const colorVariables = Object.entries({
+  return Object.entries({
     "--p": t["primary"],
     "--pf": t["primary-focus"] ?? darken(t["primary"]),
     "--pc": t["primary-content"] ?? contrasted(t["primary"]),
@@ -274,22 +197,7 @@ const toVariables = (t: Theme): [string, string][] => {
 
     "--in": t["info"],
     "--inc": t["info-content"] ?? contrasted(t["info"]),
-  }).map(([key, color]) => [key, toValue(color)] as [string, string]);
-
-  const miscellaneousVariables = Object.entries({
-    "--rounded-box": t["--rounded-box"],
-    "--rounded-btn": t["--rounded-btn"],
-    "--rounded-badge": t["--rounded-badge"],
-    "--animation-btn": t["--animation-btn"],
-    "--animation-input": t["--animation-input"],
-    "--btn-text-case": t["--btn-text-case"],
-    "--btn-focus-scale": t["--btn-focus-scale"],
-    "--border-btn": t["--border-btn"],
-    "--tab-border": t["--tab-border"],
-    "--tab-radius": t["--tab-radius"],
-  });
-
-  return [...colorVariables, ...miscellaneousVariables];
+  }).map(([key, color]) => [key, toValue(color)]);
 };
 
 /**
@@ -301,33 +209,19 @@ const toVariables = (t: Theme): [string, string][] => {
  *   --color-secondary: "#161616"
  * }
  */
-function Section({
-  colors,
-  miscellaneous,
-  fonts = {
-    fontFamily: "Albert Sans",
-    styleInnerHtml:
-      "@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&display=swap');",
-  },
-}: Props) {
-  const id = useId();
-  const theme = { ...defaultTheme, ...colors, ...miscellaneous };
-  const variables = [...toVariables(theme), ["--font-family", fonts.fontFamily]]
-    .map(([cssVar, value]) => `${cssVar}: ${value}`)
-    .join(";");
+function Section({ colors }: Props) {
+  const palette = createPalette({ ...theme, ...colors });
 
   return (
     <Head>
-      <meta name="theme-color" content={theme["primary"]} />
-      <meta name="msapplication-TileColor" content={theme["primary"]} />
       <style
-        id={`__DESIGN_SYSTEM_FONT-${id}`}
-        dangerouslySetInnerHTML={{ __html: fonts.styleInnerHtml }}
-      />
-      <style
-        id={`__DESIGN_SYSTEM_VARS-${id}`}
+        id="__DECO_DESIGN_SYSTEM"
         dangerouslySetInnerHTML={{
-          __html: `:root {${variables}}`,
+          __html: `:root {${
+            palette
+              .map(([cssVar, value]) => `${cssVar}: ${value}`)
+              .join(";")
+          }}`,
         }}
       />
     </Head>
@@ -528,11 +422,24 @@ export function Preview(props: Props) {
           <div class="navbar bg-neutral text-neutral-content rounded-box">
             <div class="flex-none">
               <button class="btn btn-square btn-ghost">
-                <Icon id="Bars3" strokeWidth={0.1} size={24} />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="inline-block h-5 w-5 stroke-current"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  >
+                  </path>
+                </svg>
               </button>
             </div>{" "}
             <div class="flex-1">
-              <button class="btn btn-ghost text-xl normal-case">deco.cx</button>
+              <button class="btn btn-ghost text-xl normal-case">daisyUI</button>
             </div>
           </div>{" "}
           <div class="flex gap-3">
