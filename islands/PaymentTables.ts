@@ -1,1 +1,1 @@
-export { default } from "deco-sites/le-biscuit/components/product/PaymentTables.tsx";
+export { default } from "deco-sites/testelele/components/product/PaymentTables.tsx";

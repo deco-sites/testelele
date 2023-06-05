@@ -22,8 +22,8 @@ import ProductSelector from "./ProductVariantSelector.tsx";
 import ProductImageZoom from "deco-sites/fashion/islands/ProductImageZoom.tsx";
 import WishlistButton from "../wishlist/WishlistButton.tsx";
 import QuantityAddToCartButton from "./QuantityAddToCartButton.tsx";
-import PaymentTables from "deco-sites/le-biscuit/islands/PaymentTables.ts";
-import { Runtime } from "deco-sites/le-biscuit/runtime.ts";
+import PaymentTables from "deco-sites/testelele/islands/PaymentTables.ts";
+import { Runtime } from "deco-sites/testelele/runtime.ts";
 
 export type Variant = "front-back" | "slider" | "auto";
 

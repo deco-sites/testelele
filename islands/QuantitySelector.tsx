@@ -1,1 +1,1 @@
-export { default } from "deco-sites/le-biscuit/components/ui/QuantitySelector.tsx";
+export { default } from "deco-sites/testelele/components/ui/QuantitySelector.tsx";

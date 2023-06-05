@@ -1,9 +1,9 @@
 import {
   Options as UseAddToCartProps,
-} from "deco-sites/le-biscuit/sdk/useAddToCart.ts";
+} from "deco-sites/testelele/sdk/useAddToCart.ts";
 import { useSignal } from "@preact/signals";
-import QuantitySelector from "deco-sites/le-biscuit/islands/QuantitySelector.tsx";
-import AddToCartButton from "deco-sites/le-biscuit/islands/AddToCartButton.tsx";
+import QuantitySelector from "deco-sites/testelele/islands/QuantitySelector.tsx";
+import AddToCartButton from "deco-sites/testelele/islands/AddToCartButton.tsx";
 
 interface Props extends UseAddToCartProps {
   /**

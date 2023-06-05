@@ -1,1 +1,1 @@
-export { default } from "deco-sites/le-biscuit/components/product/ProductSpecifications.tsx";
+export { default } from "deco-sites/testelele/components/product/ProductSpecifications.tsx";

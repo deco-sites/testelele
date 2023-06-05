@@ -7,7 +7,7 @@ import SearchControls from "deco-sites/fashion/islands/SearchControls.tsx";
 import ViewSendEvent from "deco-sites/fashion/components/ViewSendEvent.tsx";
 import { mapProductToAnalyticsItem } from "deco-sites/std/commerce/utils/productToAnalyticsItem.ts";
 import { useOffer } from "deco-sites/fashion/sdk/useOffer.ts";
-import ProductGallery from "deco-sites/le-biscuit/islands/ProductGallery.tsx";
+import ProductGallery from "deco-sites/testelele/islands/ProductGallery.tsx";
 import { Columns } from "../product/ProductGallery.tsx";
 import type { LoaderReturnType } from "$live/types.ts";
 import type { ProductListingPage } from "deco-sites/std/commerce/types.ts";
